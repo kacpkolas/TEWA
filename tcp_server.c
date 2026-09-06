@@ -7,6 +7,13 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+struct weaponData{
+    int weapon_id;
+    char desc[255];    
+    double x,y;
+    char device_ip[30];
+    };
+
 
 int main()
 {
@@ -14,6 +21,8 @@ int main()
     struct sockaddr_in addr, client_addr;
     char text[255];
     socklen_t addr_len = sizeof(client_addr);
+
+    struct weaponData data;
 
     sockfd=socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd<0){
@@ -51,13 +60,14 @@ int main()
 
     printf("Client port: %d, Client IP addr: %s\n", client_addr.sin_port, inet_ntoa(client_addr.sin_addr));
 
-    status = recv(clientfd, text, sizeof(text), 0);
+    status = recv(clientfd, &data, sizeof(data), 0);   
+    data.device_ip[30] = *inet_ntoa(client_addr.sin_addr);
     if(status){
-        printf("%s", text);
+        printf("Description: %s\n ID: %d\n x parameter: %lf\n y parameter: %lf\n IP address: %d",data.desc, data.weapon_id, data.x, data.y, data.device_ip[30]);
+        sprintf(text,"Device added succesfully");
     }
 
-
-    sprintf(text, "The server says hello\n");
+    //sprintf(text, "The server says hello\n");
     send(clientfd, text, strlen(text), 0);
 
     close(clientfd);
