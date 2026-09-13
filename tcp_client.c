@@ -6,12 +6,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "protocol.h"
 
-struct weaponData{
-    int weapon_id;
-    char desc[255];    
-    double x,y;
-    };
 
 int main()
 {

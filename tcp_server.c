@@ -6,14 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
-struct weaponData{
-    int weapon_id;
-    char desc[255];    
-    double x,y;
-    char device_ip[30];
-    };
-
+#include "protocol.h"
 
 int main()
 {
@@ -23,6 +16,7 @@ int main()
     socklen_t addr_len = sizeof(client_addr);
 
     struct weaponData data;
+    char client_ip[INET_ADDRSTRLEN];
 
     sockfd=socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd<0){
@@ -61,10 +55,16 @@ int main()
     printf("Client port: %d, Client IP addr: %s\n", client_addr.sin_port, inet_ntoa(client_addr.sin_addr));
 
     status = recv(clientfd, &data, sizeof(data), 0);   
-    data.device_ip[30] = *inet_ntoa(client_addr.sin_addr);
-    if(status){
-        printf("Description: %s\n ID: %d\n x parameter: %lf\n y parameter: %lf\n IP address: %d",data.desc, data.weapon_id, data.x, data.y, data.device_ip[30]);
+    //data.device_ip[30] = *inet_ntoa(client_addr.sin_addr);
+    inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, sizeof(client_ip));
+    
+    if(status>0){
+        printf("Description: %s\n ID: %d\n x parameter: %lf\n y parameter: %lf\n IP address: %s",data.desc, data.weapon_id, data.x, data.y, client_ip);
         sprintf(text,"Device added succesfully");
+    }else{
+        
+        sprintf(text,"Device was not added");
+
     }
 
     //sprintf(text, "The server says hello\n");
